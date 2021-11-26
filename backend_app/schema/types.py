@@ -44,8 +44,16 @@ class PetNode(DjangoObjectType):
     class Meta:
         model = Pet
         interface = (relay.Node,)
+        
 
+class AdoptionRequestNode(DjangoObjectType):
+    class Meta:
+        model = AdoptionRequest
+        interface = (relay.Node,)
 
+class BreedNode(DjangoObjectType):
+    class Meta:
+        model = Breed
 """
     La clase "Query" definida es la que realizara todo tipo de consultas por cada
     atributo creado se creara un "resolve" que es un metodo que definira la consulta
@@ -59,6 +67,8 @@ class Query(graphene.ObjectType):
     all_users = graphene.List(UserNode)
     all_pets = graphene.List(PetNode)
     all_pet_categories = graphene.List(PetCategoryNode)
+    all_vaccines = graphene.List(VaccineNode)
+    all_breeds = graphene.List(BreedNode)
     #Querys ligadas a valores
     permissions = graphene.List(PermissionsNode,roleId=graphene.Int())
     user = graphene.Field(UserNode,id=graphene.Int(),
@@ -106,7 +116,13 @@ class Query(graphene.ObjectType):
     def resolve_all_pet_categories(self,info,**kwargs):
         return PetCategory.objects.all()
 
-    #ESPECIFIC REGISTERS
+    def resolve_all_vaccines(self,info,**kwargs):
+        return Vaccine.objects.all()
+
+    def resolve_all_breeds(self,info,**kwargs):
+        return Breed.objects.all()
+
+    #ESPECIFIC REGISTERS    
     def resolve_permissions(self,info,**kwargs):
         idRole = kwargs.get('roleId')
         if idRole is not None:
@@ -120,7 +136,10 @@ class Query(graphene.ObjectType):
         dni=kwargs.get('dni')
         cellphone=kwargs.get('cellphone')
         if idUser is not None:
-            return User.objects.get(pk=idUser)
+            try:
+                return User.objects.get(pk=idUser)
+            except:
+                return None
         elif firstName is not None:
             return User.objects.get(firstName=firstName)
         elif lastName is not None:
@@ -135,27 +154,37 @@ class Query(graphene.ObjectType):
     def resolve_get_users(self,info,**kwargs):
         firstName = kwargs.get('firstName')
         lastName = kwargs.get('lastName')
-        if firstName and lastName is not None:
-            return User.objects.filter(firstName__icontains=firstName)
+        if firstName is not None and lastName is not None:
+            return User.objects.filter(firstName__icontains=firstName).filter(lastName__icontains=lastName)
+        elif firstName is not None:
+            if firstName!='':
+                return User.objects.filter(firstName__icontains=firstName)
+            return User.objects.all()
         elif lastName is not None:
             return User.objects.filter(lastName__icontains=lastName)
 
     def resolve_pet(self,info,**kwargs):
         idPet = kwargs.get('id')
         petName = kwargs.get('name')
-        if idPet is not None:
-            return Pet.objects.get(pk=idPet)
-        elif petName is not None:
-            return Pet.objects.get(name=petName)
+        try:
+            if idPet is not None:
+                return Pet.objects.get(pk=idPet)
+            elif petName is not None:
+                return Pet.objects.get(name=petName)
+        except:
+            return None
     
     def resolve_owner_pets(self,info,**kwargs):
         idOwner = kwargs.get('ownerId')
         ownerFirstName = kwargs.get('firstName')
         ownerFirstName = kwargs.get('firstName')
-        if idOwner is not None:
-            return Pet.objects.get(owner_id=idOwner)
-        elif ownerFirstName is not None:
-            return Pet.objects.filter(owner_firstName__icontains=ownerFirstName)
+        try:
+            if idOwner is not None:
+                return Pet.objects.filter(owner_id=idOwner)
+            elif ownerFirstName is not None:
+                return Pet.objects.filter(owner_firstName__icontains=ownerFirstName)
+        except:
+            return None
     
     def resolve_get_pets(self,info,**kwargs):
         categoryId = kwargs.get('categoryId')
@@ -181,4 +210,4 @@ class Query(graphene.ObjectType):
         elif isSterilized is not None:
             return Pet.objects.filter(isSterilized__icontains=isSterilized)    
         elif isAdopted is not None:
-            return Pet.objects.filter(isAdopted__icontains=isAdopted)    
+            return Pet.objects.filter(isAdopted=isAdopted)

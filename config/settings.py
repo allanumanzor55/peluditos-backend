@@ -14,7 +14,7 @@ from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
+STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
@@ -71,11 +71,7 @@ CORS_ALLOW_METHODS = (
     'DELETE',
     'OPTIONS'
 )
- 
- # Permitir que los encabezados de solicitud de dominio cruzado, puede usar el valor predeterminado, el jefe de solicitud predeterminado es:
-# from corsheaders.defaults import default_headers
-# CORS_ALLOW_HEADERS = default_headers
- 
+
 CORS_ALLOW_HEADERS = (
     'accept',
     'XMLHttpRequest',
@@ -91,11 +87,8 @@ CORS_ALLOW_HEADERS = (
     'Pragma',
 )
 ALLOWED_HOSTS = ['*']
-#CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOW_CREDENTIALS = True
 CORS_ORIGIN_ALLOW_ALL = True
-
-#CORS_ORIGIN_WHITELIST = ('http://localhost:8081','http://localhost:8082','http://localhost:8080')
-
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -118,23 +111,24 @@ WSGI_APPLICATION = 'config.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
+DATABASES = {
+    'default': {
+        'ENGINE': 'djongo',
+        'CLIENT': {
+            'name': 'db_patitas',
+            'host': 'mongodb+srv://manager:Cy51zyaMmjcWlx02@cluster0.gwqea.mongodb.net/db_patitas?retryWrites=true&w=majority',
+            'username': 'manager',
+            'password':'Cy51zyaMmjcWlx02',
+            'authMechanism': 'SCRAM-SHA-1'
+        }
+    }
+}
 # DATABASES = {
-#     'default': {
-#         'ENGINE': 'djongo',
-#         'CLIENT': {
-#             'name': 'db_patitas',
-#             'host': 'mongodb+srv://admin:LuJnWkrpjwgIA3X6@patitas.pqw6o.mongodb.net/db_patitas?retryWrites=true&w=majority',
-#             'username': 'admin',
-#             'password':'LuJnWkrpjwgIA3X6',
-#             'authMechanism': 'SCRAM-SHA-1'
-#         }
+#     'default':{
+#         'ENGINE':'djongo',
+#         'NAME':'demo_database'
 #     }
 # }
-DATABASES = dict()
-import dj_database_url  
-db_from_env = dj_database_url.config(conn_max_age=500)  
-DATABASES['default'].update(db_from_env)
-
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
 
@@ -171,14 +165,9 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
 
-# STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')  
 STATIC_URL = '/static/'
-# Extra places for collectstatic to find static files.
-STATICFILES_DIRS = (  
-    os.path.join(BASE_DIR, 'static'),
-)
-STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
+
+EMAIL_USE_TLS = True 
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
