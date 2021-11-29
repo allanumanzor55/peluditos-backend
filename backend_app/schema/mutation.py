@@ -580,7 +580,7 @@ class restorePassword(graphene.Mutation):
         if us_ins:
             if us_ins.secureAnswer == answer:
                 try:
-                    remitente = "allanalvarez55@gmail.com"
+                    remitente = "heisenberg.white.bad@gmail.com"
                     destinatario = us_ins.email
                     asunto="Envio de contraseña por email"
                     mensaje="""
@@ -593,7 +593,7 @@ class restorePassword(graphene.Mutation):
                     mail["Subject"] = asunto
                     smtp = SMTP("smtp.gmail.com")
                     smtp.starttls()
-                    smtp.login(remitente,"Condemilenario")
+                    smtp.login(remitente,"breakingbad")
                     smtp.sendmail(remitente, destinatario, mail.as_string())
                     smtp.quit()
                     return restorePassword(verified=True,msg="Verificacion correcta, se envio la contraseña a tu correo")
