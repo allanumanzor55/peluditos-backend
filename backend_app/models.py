@@ -64,23 +64,32 @@ class Breed(models.Model):
 class Pet(models.Model):
     name = models.CharField(max_length=70,blank=False,null=False,default="N/D")
     category = models.ForeignKey(PetCategory, on_delete=models.CASCADE)
-    owner = models.ForeignKey(User, on_delete=models.CASCADE)
+    owner = models.ForeignKey(User, on_delete=models.CASCADE,related_name="owner_set")
     birthDate = models.DateField()
     breed = models.ForeignKey(Breed, on_delete=models.CASCADE)
     color = models.CharField(max_length=50,blank=False,null=False,default="N/D")
     size = models.CharField(max_length=10,blank=False,null=False,default="N/D")
     gender = models.CharField(max_length=10,blank=False,null=False,default="N/D")
-    isSterilized = models.BooleanField(null=False,default=False)
-    isAdopted = models.BooleanField(null=False,default=False) 
+    isSterilized = models.CharField(max_length=5,default="false")
+    isAdopted = models.CharField(max_length=5,default="false")
     vaccines = models.ManyToManyField(Vaccine)
     showDetails = models.BooleanField(null=False,default=False)
     description = models.CharField(max_length=1000,blank=False,null=False,default="N/D")
+    likes = models.ManyToManyField(User,related_name="likes_set")
+    isLike = models.BooleanField(null=False,default=False)
+    
+    class Meta:
+        abstract = False
+    
 
 
 class AdoptionRequest(models.Model):
-    user = models.ForeignKey(User,on_delete=models.CASCADE)
-    pet = models.ForeignKey(Pet,on_delete=models.CASCADE)
+    sender = models.ForeignKey(User,on_delete=models.CASCADE,related_name="sender_set",default=0)
+    receiver = models.ForeignKey(User,on_delete=models.CASCADE,related_name="receiver_set",default=0)
+    pet = models.ForeignKey(Pet,on_delete=models.CASCADE,related_name="pet_set")
+    description = models.CharField(max_length=500,blank=False,null=False,default="N/D")
     date = models.DateField(auto_now=True)
-    accepted = models.BooleanField(null=False,default=False)
+    state = models.CharField(max_length=15,default="PENDIENTE")
+
 
 

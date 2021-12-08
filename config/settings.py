@@ -117,10 +117,10 @@ DATABASES = {
     'default': {
         'ENGINE': 'djongo',
         'CLIENT': {
-            'name': 'db_patitas',
-            'host': 'mongodb+srv://manager:Cy51zyaMmjcWlx02@cluster0.gwqea.mongodb.net/db_patitas?retryWrites=true&w=majority',
-            'username': 'manager',
-            'password':'Cy51zyaMmjcWlx02',
+            'name': 'db_peluditos',
+            'host': 'mongodb+srv://admin:uR5pdbzH7u5AnabV@cluster0.cnlwn.mongodb.net/db_peluditos?retryWrites=true&w=majority',
+            'username': 'admin',
+            'password':'uR5pdbzH7u5AnabV',
             'authMechanism': 'SCRAM-SHA-1'
         }
     }
